@@ -1,0 +1,47 @@
+on: [push, pull_request]
+
+name: Rust
+
+jobs:
+  build_and_test:
+    name: Build and test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+
+      - name: Check
+        uses: actions-rs/cargo@v1
+        with:
+          command: check
+
+      - name: Test Suite
+        uses: actions-rs/cargo@v1
+        with:
+          command: test
+
+  check_fmt_and_docs:
+    name: Checking fmt, clippy, and docs
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+
+    - name: setup
+      run: |
+        rustup component add clippy rustfmt
+        rustc --version
+
+    - name: clippy
+      run: cargo clippy --tests --examples -- -D warnings
+
+    - name: fmt
+      run: cargo fmt --all -- --check
+
+    - name: Docs
+      run: cargo doc --no-deps
