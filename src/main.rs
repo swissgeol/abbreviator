@@ -1,7 +1,7 @@
 use std::env;
 
 use sqlx::SqlitePool;
-use tide::Server;
+use tide::{Request, Response, Server, StatusCode};
 
 mod handlers;
 #[cfg(test)]
@@ -57,6 +57,16 @@ fn server(state: State) -> Server<State> {
 
     app.at("/").post(handlers::shorten);
     app.at("/:id").get(handlers::resolve);
+
+    // Health check
+    app.at("/health").get(|req: Request<State>| async move {
+        let pool = &req.state().db_pool;
+        if sqlx::query("SELECT 1").fetch_one(pool).await.is_ok() {
+            Ok(Response::new(StatusCode::Ok))
+        } else {
+            Ok(Response::new(StatusCode::ServiceUnavailable))
+        }
+    });
 
     app
 }
