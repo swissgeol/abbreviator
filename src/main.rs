@@ -7,6 +7,7 @@ mod handlers;
 #[cfg(test)]
 mod tests;
 
+// Shared application state
 #[derive(Clone, Debug)]
 struct State {
     db_pool: SqlitePool,
@@ -15,6 +16,7 @@ struct State {
 }
 
 impl State {
+    // Setup state from environment
     async fn setup() -> anyhow::Result<State> {
         let id_length = env::var("ID_LENGTH")
             .expect("Missing `ID_LENGTH` env variable")
@@ -38,23 +40,30 @@ impl State {
 #[async_std::main]
 async fn main() -> anyhow::Result<()> {
     dotenv::dotenv().ok();
-
+    
+    // Start logging
     tide::log::start();
 
+    // Create application state
     let state = State::setup().await?;
 
+    // Run any pending database migrations
     sqlx::migrate!().run(&state.db_pool).await?;
 
+    // Compose server
     let app = server(state);
 
+    // Listen...
     app.listen(format!("0.0.0.0:{}", env::var("PORT")?)).await?;
 
     Ok(())
 }
 
 fn server(state: State) -> Server<State> {
+    // Create app
     let mut app = tide::with_state(state);
 
+    // Add routes & handlers
     app.at("/").post(handlers::shorten);
     app.at("/:id").get(handlers::resolve);
 
