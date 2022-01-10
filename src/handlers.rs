@@ -13,6 +13,13 @@ struct RequestBody {
 pub(crate) async fn shorten(mut req: Request<State>) -> tide::Result {
     let RequestBody { url } = req.body_json().await?;
 
+    // Validate url host against whitelist
+    if let Some(whitelist) = &req.state().host_whitelist {
+        if !url.has_host() || !whitelist.contains(&url.host_str().unwrap().to_owned()) {
+            return Ok(Response::new(StatusCode::ImATeapot));
+        }
+    }
+
     // Create random alphanumeric id with a given length
     let id: String = thread_rng()
         .sample_iter(&Alphanumeric)

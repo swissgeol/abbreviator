@@ -11,6 +11,7 @@ mod tests;
 struct State {
     db_pool: SqlitePool,
     id_length: usize,
+    host_whitelist: Option<Vec<String>>,
 }
 
 impl State {
@@ -22,8 +23,15 @@ impl State {
 
         let db_url = env::var("DATABASE_URL").expect("Missing `DATABASE_URL` env variable");
         let db_pool = SqlitePool::connect(&db_url).await?;
+        let host_whitelist = env::var("HOST_WHITELIST")
+            .map(|s| s.split_whitespace().map(String::from).collect())
+            .ok();
 
-        Ok(State { db_pool, id_length })
+        Ok(State {
+            db_pool,
+            id_length,
+            host_whitelist,
+        })
     }
 }
 
