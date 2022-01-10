@@ -19,12 +19,13 @@ impl State {
     // Setup state from environment
     async fn setup() -> anyhow::Result<State> {
         let id_length = env::var("ID_LENGTH")
-            .expect("Missing `ID_LENGTH` env variable")
+            .unwrap_or_else(|_| String::from("5"))
             .parse()
-            .unwrap();
+            .expect("Failed to parse `ID_LENGTH` to integer");
 
-        let db_url = env::var("DATABASE_URL").expect("Missing `DATABASE_URL` env variable");
+        let db_url = env::var("DATABASE_URL").unwrap_or_else(|_| String::from("sqlite::memory:"));
         let db_pool = SqlitePool::connect(&db_url).await?;
+
         let host_whitelist = env::var("HOST_WHITELIST")
             .map(|s| s.split_whitespace().map(String::from).collect())
             .ok();
@@ -39,8 +40,6 @@ impl State {
 
 #[async_std::main]
 async fn main() -> anyhow::Result<()> {
-    dotenv::dotenv().ok();
-    
     // Start logging
     tide::log::start();
 
@@ -54,7 +53,12 @@ async fn main() -> anyhow::Result<()> {
     let app = server(state);
 
     // Listen...
-    app.listen(format!("0.0.0.0:{}", env::var("PORT")?)).await?;
+    let address = format!(
+        "{}:{}",
+        env::var("HOST").unwrap_or_else(|_| String::from("0.0.0.0")),
+        env::var("PORT").unwrap_or_else(|_| 8080.to_string())
+    );
+    app.listen(address).await?;
 
     Ok(())
 }

@@ -8,7 +8,6 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "async-std",
- "dotenv",
  "rand 0.8.4",
  "serde",
  "sqlx",

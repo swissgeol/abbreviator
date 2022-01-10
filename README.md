@@ -10,11 +10,7 @@ Build and run with docker:
 # build
 docker build -t abbreviator:test -f Dockerfile .
 # run
-docker run -d -p 8080:8080 \
-    -e DATABASE_URL='sqlite::memory:' \
-    -e ID_LENGTH='5' \
-    -e PORT='8080' \
-    abbreviator:test
+docker run -d -p 8080:8080 abbreviator:test
 ```
 
 This exposes the service on `localhost:8080` with an in-memory sqlite database.
