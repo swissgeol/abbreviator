@@ -11,7 +11,6 @@ async fn basic_integration() -> tide::Result<()> {
 
     let app = server(state);
 
-
     let incorrect_url = "https://betina.swissgeol.ch/?layers=ch.swisst";
 
     // Create shortlink
@@ -19,7 +18,6 @@ async fn basic_integration() -> tide::Result<()> {
     req400.set_body(format!("{{\"url\": \"{}\"}}", incorrect_url));
     let res400: Response = app.respond(req400).await?;
     assert_eq!(StatusCode::BadRequest, res400.status());
-
 
     let url = "https://beta.swissgeol.ch/?anything_ok";
 
