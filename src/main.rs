@@ -26,10 +26,7 @@ impl State {
         let db_url = env::var("DATABASE_URL").unwrap_or_else(|_| String::from("sqlite::memory:"));
         let db_pool = SqlitePool::connect(&db_url).await?;
 
-        let host_whitelist = whitelist
-            .split_whitespace()
-            .map(String::from)
-            .collect::<Vec<_>>();
+        let host_whitelist: Vec<String> = whitelist.split_whitespace().map(String::from).collect();
 
         Ok(State {
             db_pool,

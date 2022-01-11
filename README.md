@@ -26,7 +26,7 @@ The `Location` header contains the shortened url to retrieve the original url:
 
 ```bash
 # replace id with the last path segment of the shortened url
-curl -v localhost:8080/{id} 
+curl -v localhost:8080/{id}
 ```
 
 This returns a response with status `301` and the original url in the `Location` header.
@@ -46,7 +46,7 @@ Expects a json body of the form:
 Returns an empty response with status `201 Created` and the shortened url in the `Location` header.
 
 ### `GET /{id}`
- 
+
 Returns an empty response with status `301 Moved Permanently` and the original url in the `Location` header.
 
 ## Develop
@@ -75,7 +75,7 @@ The following environment variables can be set to customize the service:
 | `PORT`           | Port the application listens to, defaults to `8080`.       |
 | `DATABASE_URL`   | SQLite database url, defaults to `sqlite::memory:`.        |
 | `ID_LENGTH`      | Length of the generated key, defaults to `5`.              |
-| `HOST_WHITELIST` | Optional whitespace separated list of allowed hosts of the URL to be shortened. |
+| `HOST_WHITELIST` | Whitespace separated list of allowed hosts of the URL to be shortened. |
 
 ## License
 
