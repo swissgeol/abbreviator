@@ -14,12 +14,11 @@ pub(crate) async fn shorten(mut req: Request<State>) -> tide::Result {
     let RequestBody { url } = req.body_json().await?;
 
     // Validate url host against whitelist
-    if let Some(whitelist) = &req.state().host_whitelist {
-        if !url.has_host() || !whitelist.contains(&url.host_str().unwrap().to_owned()) {
-            return Ok(Response::builder(StatusCode::BadRequest)
-                .body("Url host not whitelisted!")
-                .build());
-        }
+    let whitelist = &req.state().host_whitelist;
+    if !url.has_host() || !whitelist.contains(&url.host_str().unwrap().to_owned()) {
+        return Ok(Response::builder(StatusCode::BadRequest)
+            .body("Url host not whitelisted!")
+            .build());
     }
 
     // Create random alphanumeric id with a given length

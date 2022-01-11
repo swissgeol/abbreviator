@@ -12,23 +12,21 @@ mod tests;
 struct State {
     db_pool: SqlitePool,
     id_length: usize,
-    host_whitelist: Option<Vec<String>>,
+    host_whitelist: Vec<String>,
 }
 
 impl State {
     // Setup state from environment
-    async fn setup() -> anyhow::Result<State> {
+    async fn setup(whitelist: String) -> anyhow::Result<State> {
         let id_length = env::var("ID_LENGTH")
-            .unwrap_or_else(|_| String::from("5"))
+            .unwrap_or_else(|_| "5".to_string())
             .parse()
             .expect("Failed to parse `ID_LENGTH` to integer");
 
         let db_url = env::var("DATABASE_URL").unwrap_or_else(|_| String::from("sqlite::memory:"));
         let db_pool = SqlitePool::connect(&db_url).await?;
 
-        let host_whitelist = env::var("HOST_WHITELIST")
-            .map(|s| s.split_whitespace().map(String::from).collect())
-            .ok();
+        let host_whitelist = whitelist.split_whitespace().map(String::from).collect::<Vec<_>>();
 
         Ok(State {
             db_pool,
@@ -44,7 +42,8 @@ async fn main() -> anyhow::Result<()> {
     tide::log::start();
 
     // Create application state
-    let state = State::setup().await?;
+    let whitelist = env::var("HOST_WHITELIST").expect("Missing whitelist");
+    let state = State::setup(whitelist).await?;
 
     // Run any pending database migrations
     sqlx::migrate!().run(&state.db_pool).await?;
