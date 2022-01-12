@@ -11,15 +11,7 @@ async fn basic_integration() -> tide::Result<()> {
 
     let app = server(state);
 
-    let incorrect_url = "https://betina.swissgeol.ch/?layers=ch.swisst";
-
-    // Create shortlink
-    let mut req400 = Request::new(Method::Post, "https://link.swissgeol.ch/");
-    req400.set_body(format!("{{\"url\": \"{}\"}}", incorrect_url));
-    let res400: Response = app.respond(req400).await?;
-    assert_eq!(StatusCode::BadRequest, res400.status());
-
-    let url = "https://beta.swissgeol.ch/?anything_ok";
+    let url = "https://beta.swissgeol.ch/?layers=ch.swisstopo.geologie-geocover%1Cboreholes%2Ccross_section%2Cearthquakes&layers_visibility=true%2Cfalse%2Cfalse%2Cfalse&layers_transparency=0.3%2C0%2C0%2C0&lang=en&map_transparency=0&map=ch.swisstopo.pixelkarte-grau&lon=6.06749&lat=43.77784&elevation=204227&heading=26&pitch=-33";
 
     // Create shortlink
     let mut req = Request::new(Method::Post, "https://link.swissgeol.ch/");
@@ -42,5 +34,25 @@ async fn basic_integration() -> tide::Result<()> {
     let res: Response = app.respond(req).await?;
 
     assert_eq!(url, res.header("Location").unwrap().as_str());
+    Ok(())
+}
+
+#[async_std::test]
+async fn host_whitelist() -> tide::Result<()> {
+    let state = State::setup("beta.swissgeol.ch toto").await?;
+
+    sqlx::migrate!().run(&state.db_pool).await?;
+
+    let app = server(state);
+
+    let url = "https://betina.swissgeol.ch/?layers=ch.swisst";
+
+    // Create shortlink
+    let mut req = Request::new(Method::Post, "https://link.swissgeol.ch/");
+    req.set_body(format!("{{\"url\": \"{}\"}}", url));
+    
+    let res: Response = app.respond(req).await?;
+    assert_eq!(StatusCode::BadRequest, res.status());
+
     Ok(())
 }
