@@ -17,7 +17,7 @@ struct State {
 
 impl State {
     // Setup state from environment
-    async fn setup(whitelist: String) -> anyhow::Result<State> {
+    async fn setup(whitelist: &str) -> anyhow::Result<State> {
         let id_length = env::var("ID_LENGTH")
             .unwrap_or_else(|_| "5".to_string())
             .parse()
@@ -43,7 +43,7 @@ async fn main() -> anyhow::Result<()> {
 
     // Create application state
     let whitelist = env::var("HOST_WHITELIST").expect("Missing whitelist");
-    let state = State::setup(whitelist).await?;
+    let state = State::setup(&whitelist).await?;
 
     // Run any pending database migrations
     sqlx::migrate!().run(&state.db_pool).await?;

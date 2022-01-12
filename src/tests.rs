@@ -5,7 +5,7 @@ use super::*;
 
 #[async_std::test]
 async fn basic_integration() -> tide::Result<()> {
-    let state = State::setup(String::from("beta.swissgeol.ch toto")).await?;
+    let state = State::setup("beta.swissgeol.ch toto").await?;
 
     sqlx::migrate!().run(&state.db_pool).await?;
 
