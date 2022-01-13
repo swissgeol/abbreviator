@@ -10,7 +10,10 @@ Build and run with docker:
 # build
 docker build -t abbreviator:test -f Dockerfile .
 # run
-docker run -d -p 8080:8080 abbreviator:test
+docker run -d -p 8080:8080 \
+    -e DATABASE_URL='sqlite::memory:' \
+    -e HOST_WHITELIST='github.com' \
+    abbreviator:test
 ```
 
 This exposes the service on `localhost:8080` with an in-memory sqlite database.
@@ -69,13 +72,13 @@ cargo run
 
 The following environment variables can be set to customize the service:
 
-| Variable         | Description                                                |
-| ---------------- | ---------------------------------------------------------- |
-| `HOST`           | Host the application listens to, defaults to `0.0.0.0`.    |
-| `PORT`           | Port the application listens to, defaults to `8080`.       |
-| `DATABASE_URL`   | SQLite database url, defaults to `sqlite::memory:`.        |
-| `ID_LENGTH`      | Length of the generated key, defaults to `5`.              |
+| Variable         | Description                                                            |
+| ---------------- | ---------------------------------------------------------------------- |
+| `DATABASE_URL`   | SQLite database url.                                                   |
 | `HOST_WHITELIST` | Whitespace separated list of allowed hosts of the URL to be shortened. |
+| `ID_LENGTH`      | Length of the generated key, defaults to `5`.                          |
+| `HOST`           | Host the application listens to, defaults to `0.0.0.0`.                |
+| `PORT`           | Port the application listens to, defaults to `8080`.                   |
 
 ## License
 
