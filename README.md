@@ -12,7 +12,7 @@ docker build -t abbreviator:test -f Dockerfile .
 # run
 docker run -d -p 8080:8080 \
     -e DATABASE_URL='sqlite::memory:' \
-    -e HOST_WHITELIST='github.com' \
+    -e HOST_WHITELIST='beta.swissgeol.ch' \
     abbreviator:test
 ```
 
@@ -22,7 +22,7 @@ This exposes the service on `localhost:8080` with an in-memory sqlite database.
 Sample request to shorten a url:
 
 ```bash
-curl -v localhost:8080/ -d '{ "url": "https://github.com/swissgeol/abbreviator.git" }'
+curl -v localhost:8080/ -d '{ "url": "https://beta.swissgeol.ch/?layers=ch.swisstopo.geologie-geocover" }'
 ```
 
 The `Location` header contains the shortened url to retrieve the original url:
