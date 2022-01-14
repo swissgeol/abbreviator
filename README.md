@@ -80,6 +80,21 @@ The following environment variables can be set to customize the service:
 | `HOST`           | Host the application listens to, defaults to `0.0.0.0`.                |
 | `PORT`           | Port the application listens to, defaults to `8080`.                   |
 
+To persist the database create a storage directory and mount it into the container:
+
+```bash
+# build
+docker build -t abbreviator:prod -f Dockerfile .
+# data
+mkdir -p storage
+# run
+docker run -d -p 8080:8080 \
+    -e DATABASE_URL='sqlite:///storage/prod.db' \
+    -e HOST_WHITELIST='dev.swissgeol.ch int.swissgeol.ch beta.swissgeol.ch swissgeol.ch' \
+    -v `pwd`/storage:/storage \
+    abbreviator:prod
+```
+
 ## License
 
 abbreviator is available under the terms of the GNU General Public License Version 3. For full license terms, see [LICENSE](./LICENSE).

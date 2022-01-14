@@ -39,6 +39,8 @@ WORKDIR /abbreviator
 COPY --from=builder /abbreviator/target/x86_64-unknown-linux-musl/release/abbreviator ./
 
 # Use an unprivileged user.
-USER abbreviator:abbreviator
+# USER abbreviator:abbreviator
+# TODO: give user write access to storage
+USER root:root 
 
 CMD ["/abbreviator/abbreviator"]
