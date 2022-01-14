@@ -1,6 +1,7 @@
 use std::env;
+use std::str::FromStr;
 
-use sqlx::SqlitePool;
+use sqlx::sqlite::{SqliteConnectOptions, SqlitePool};
 
 // Shared application state
 #[derive(Clone, Debug)]
@@ -13,7 +14,8 @@ pub struct State {
 impl State {
     pub(crate) async fn new() -> anyhow::Result<State> {
         let db_url = env::var("DATABASE_URL").expect("Missing `DATABASE_URL` environment variable");
-        let db_pool = SqlitePool::connect(&db_url).await?;
+        let db_options = SqliteConnectOptions::from_str(&db_url)?.create_if_missing(true);
+        let db_pool = SqlitePool::connect_with(db_options).await?;
         tide::log::info!("DATABASE_URL: {}", db_url);
 
         let whitelist =
