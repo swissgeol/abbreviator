@@ -52,12 +52,15 @@ pub(crate) async fn resolve(req: Request<State>) -> tide::Result {
     let id = req.param("id")?;
 
     // Fetch url
-    let row: (String,) = sqlx::query_as("SELECT url FROM urls WHERE id = ?")
+    let row: Option<(String,)> = sqlx::query_as("SELECT url FROM urls WHERE id = ?")
         .bind(id)
-        .fetch_one(&req.state().db_pool)
+        .fetch_optional(&req.state().db_pool)
         .await?;
 
-    Ok(Response::builder(StatusCode::MovedPermanently)
-        .header("Location", row.0)
-        .build())
+    match row {
+        Some((url,)) => Ok(Response::builder(StatusCode::MovedPermanently)
+            .header("Location", url)
+            .build()),
+        None => Ok(Response::new(StatusCode::NotFound)),
+    }
 }

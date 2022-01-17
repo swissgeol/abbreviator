@@ -1,6 +1,6 @@
 use tide::{Request, Response, Server, StatusCode};
 
-pub mod handlers;
+mod handlers;
 mod state;
 
 pub use state::State;
