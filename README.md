@@ -58,7 +58,7 @@ Returns an empty response with status `301 Moved Permanently` and the original u
 
 ```bash
 # clone
-git clone git@github.com:swissgeol/abbreviator.git
+git clone git@github.com:camptocamp/abbreviator.git
 cd abbreviator
 
 # build and test
