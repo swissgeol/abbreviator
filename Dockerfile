@@ -6,7 +6,7 @@ RUN apt update && apt install -y musl-tools musl-dev
 RUN update-ca-certificates
 
 # Create appuser
-ENV USER=abbreviator
+ENV USER=appuser
 ENV UID=10001
 
 RUN adduser \
@@ -29,6 +29,8 @@ RUN cargo build --target x86_64-unknown-linux-musl --release
 ## Final image
 FROM alpine
 
+RUN apk add util-linux
+
 # Import from builder.
 COPY --from=builder /etc/passwd /etc/passwd
 COPY --from=builder /etc/group /etc/group
@@ -39,8 +41,6 @@ WORKDIR /abbreviator
 COPY --from=builder /abbreviator/target/x86_64-unknown-linux-musl/release/abbreviator ./
 
 # Use an unprivileged user.
-# USER abbreviator:abbreviator
-# TODO: give user write access to storage
-USER root:root 
-
-CMD ["/abbreviator/abbreviator"]
+COPY --from=builder /abbreviator/entrypoint.sh ./
+ENTRYPOINT ["/bin/sh", "./entrypoint.sh"]
+CMD ["./abbreviator"]

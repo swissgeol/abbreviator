@@ -1,6 +1,6 @@
 # abbreviator
 
-URL Shortener for the `swissgeol` subsurface viewer.
+URL Shortener for the [`swissgeol`]("https://github.com/swissgeol/ngm") subsurface viewer.
 
 ## Quickstart
 
@@ -54,7 +54,7 @@ Returns an empty response with status `301 Moved Permanently` and the original u
 
 ## Develop
 
-[Install Rust](https://www.rust-lang.org/tools/install) then:
+[Install Rust](https://www.rust-lang.org/tools/install) then clone the project and run it locally. 
 
 ```bash
 # clone
@@ -80,20 +80,19 @@ The following environment variables can be set to customize the service:
 | `HOST`           | Host the application listens to, defaults to `0.0.0.0`.                |
 | `PORT`           | Port the application listens to, defaults to `8080`.                   |
 
-To persist the database create a storage directory and mount it into the container:
+To persist the database mount a volume or directory to `/storage` and let the `DATABASE_URL` point to there. 
 
 ```bash
-# build
+# build & run
 docker build -t abbreviator:prod -f Dockerfile .
-# data
-mkdir -p storage
-# run
 docker run -d -p 8080:8080 \
     -e DATABASE_URL='sqlite:///storage/prod.db' \
     -e HOST_WHITELIST='dev.swissgeol.ch int.swissgeol.ch beta.swissgeol.ch swissgeol.ch' \
-    -v `pwd`/storage:/storage \
+    -v `pwd`:/storage \
     abbreviator:prod
 ```
+
+The app runs with an unproviledged user `appuser` that gets write access on startup, see [entrypoint.sh](./entrypoint.sh)
 
 ## License
 
