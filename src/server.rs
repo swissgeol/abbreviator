@@ -19,11 +19,13 @@ pub async fn server() -> anyhow::Result<Server<State>> {
     // Health check
     app.at("/health").get(|req: Request<State>| async move {
         let pool = &req.state().db_pool;
-        if sqlx::query("SELECT 1").fetch_one(pool).await.is_ok() {
-            Ok(Response::new(StatusCode::Ok))
+        let version = format!("CARGO_PKG_VERSION: {}", env!("CARGO_PKG_VERSION"));
+        let status = if sqlx::query("SELECT 1").fetch_one(pool).await.is_ok() {
+            StatusCode::Ok
         } else {
-            Ok(Response::new(StatusCode::ServiceUnavailable))
-        }
+            StatusCode::ServiceUnavailable
+        };
+        Ok(Response::builder(status).body(version).build())
     });
 
     // Run any pending database migrations
