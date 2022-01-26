@@ -4,6 +4,8 @@ on:
   push:
     tags:
       - 'v*'
+      - 'int*'
+      - 'prod*'
     branches:
       - 'main'
 
@@ -19,6 +21,13 @@ jobs:
         uses: docker/metadata-action@v3
         with:
           images: camptocamp/abbreviator
+          tags: |
+            type=ref,event=branch
+            type=semver,pattern={{version}}
+            type=semver,pattern={{version}},value=latest
+            type=match,pattern=int|prod
+          flavor: |
+            latest=false
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
@@ -37,6 +46,3 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-
-      - name: Inspect
-        run: docker image inspect camptocamp/abbreviator:latest
