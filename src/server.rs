@@ -17,7 +17,7 @@ pub async fn server() -> anyhow::Result<Server<State>> {
     app.at("/:id").get(handlers::resolve);
 
     // Health check
-    app.at("/health").get(|req: Request<State>| async move {
+    app.at("/health_check").get(|req: Request<State>| async move {
         let pool = &req.state().db_pool;
         let version = format!("CARGO_PKG_VERSION: {}", env!("CARGO_PKG_VERSION"));
         let status = if sqlx::query("SELECT 1").fetch_one(pool).await.is_ok() {
