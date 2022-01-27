@@ -24,7 +24,6 @@ jobs:
           tags: |
             type=ref,event=branch
             type=semver,pattern={{version}}
-            type=semver,pattern={{version}},value=latest
             type=match,pattern=int|prod
           flavor: |
             latest=false
