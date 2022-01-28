@@ -1,6 +1,6 @@
 # abbreviator
 
-URL Shortener for the [`swissgeol`]("https://github.com/swissgeol/ngm") subsurface viewer.
+URL Shortener, originally developed for the [`swissgeol`]("https://github.com/swissgeol/ngm") subsurface viewer.
 
 ## Quickstart
 
@@ -51,6 +51,10 @@ Returns an empty response with status `201 Created` and the shortened url in the
 ### `GET /{id}`
 
 Returns an empty response with status `301 Moved Permanently` and the original url in the `Location` header.
+
+### `GET /health_check`
+
+Checks the connection to the database and returns the `CARGO_PKG_VERSION` environment variable on success, `503 Service Unavailable` otherwise.
 
 ## Develop
 
