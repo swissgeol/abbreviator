@@ -1,4 +1,8 @@
-use tide::{Request, Response, Server, StatusCode};
+use tide::{
+    http::headers::HeaderValue,
+    security::{CorsMiddleware, Origin},
+    Request, Response, Server, StatusCode,
+};
 
 mod handlers;
 mod state;
@@ -11,6 +15,14 @@ pub async fn server() -> anyhow::Result<Server<State>> {
 
     // Create app
     let mut app = tide::with_state(state);
+
+    // Cors middleware
+    let cors = CorsMiddleware::new()
+        .allow_methods("GET, POST, OPTIONS".parse::<HeaderValue>().unwrap())
+        .allow_origin(Origin::from("*"))
+        .allow_credentials(false)
+        .expose_headers("*".parse::<HeaderValue>().unwrap());
+    app.with(cors);
 
     // Add routes & handlers
     app.at("/").post(handlers::shorten);
