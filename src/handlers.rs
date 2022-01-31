@@ -14,10 +14,11 @@ pub(crate) async fn shorten(mut req: Request<State>) -> tide::Result {
     let RequestBody { url } = req.body_json().await?;
 
     // Validate url host against whitelist
+    let host = url.host_str();
     let whitelist = &req.state().host_whitelist;
-    if !url.has_host() || !whitelist.contains(&url.host_str().unwrap().to_owned()) {
+    if host.is_none() || !whitelist.contains(&host.unwrap().to_owned()) {
         return Ok(Response::builder(StatusCode::BadRequest)
-            .body("Url host not whitelisted!")
+            .body(format!("Url host `{}` not whitelisted!", &host.unwrap()))
             .build());
     }
 
