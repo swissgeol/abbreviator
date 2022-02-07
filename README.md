@@ -4,20 +4,17 @@ URL Shortener, originally developed for the [`swissgeol`]("https://github.com/sw
 
 ## Quickstart
 
-Build and run with docker:
+Spawn the docker image built from the `main` branch.
 
 ```bash
-# build
-docker build -t abbreviator:test -f Dockerfile .
 # run
 docker run -d -p 8080:8080 \
     -e DATABASE_URL='sqlite::memory:' \
     -e HOST_WHITELIST='beta.swissgeol.ch' \
-    abbreviator:test
+    camptocamp/abbreviator:main
 ```
 
 This exposes the service on `localhost:8080` with an in-memory sqlite database.
-
 
 Sample request to shorten a url:
 
