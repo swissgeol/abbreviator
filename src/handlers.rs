@@ -22,12 +22,25 @@ pub(crate) async fn shorten(mut req: Request<State>) -> tide::Result {
             .build());
     }
 
-    // Create random alphanumeric id with a given length
-    let id: String = thread_rng()
-        .sample_iter(&Alphanumeric)
-        .take(req.state().id_length)
-        .map(char::from)
-        .collect();
+    // Get short link id
+    let id = if let Some((id,)) =
+        // Check if the url already exist and reuse the id
+        sqlx::query_as::<_, (String,)>(
+            "SELECT id FROM urls WHERE url = ? ORDER BY created DESC LIMIT 1",
+        )
+        .bind(url.as_str())
+        .fetch_optional(&req.state().db_pool)
+        .await?
+    {
+        id
+    } else {
+        // Create random alphanumeric id with a given length
+        thread_rng()
+            .sample_iter(&Alphanumeric)
+            .take(req.state().id_length)
+            .map(char::from)
+            .collect()
+    };
 
     // Create short url
     let remote_url = req
@@ -37,8 +50,8 @@ pub(crate) async fn shorten(mut req: Request<State>) -> tide::Result {
     let remote_host = remote_url[Position::BeforeHost..Position::AfterPort].to_owned();
     let short_url = Url::parse(&format!("https://{}/{}", remote_host, id))?;
 
-    // Insert record
-    sqlx::query("INSERT INTO urls (id, url) VALUES (?, ?)")
+    // Insert or replace record
+    sqlx::query("INSERT OR REPLACE INTO urls (id, url) VALUES (?, ?)")
         .bind(id)
         .bind(url.as_str())
         .execute(&req.state().db_pool)
