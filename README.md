@@ -93,7 +93,7 @@ docker run -d -p 8080:8080 \
     abbreviator:prod
 ```
 
-The app runs with an unproviledged user `appuser` that gets write access on startup, see [entrypoint.sh](./entrypoint.sh)
+The app runs with an unprivileged user `appuser` that gets write access on startup, see [entrypoint.sh](./entrypoint.sh)
 
 ## License
 
