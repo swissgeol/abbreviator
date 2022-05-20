@@ -10,7 +10,7 @@ Spawn the docker image built from the `main` branch.
 # run
 docker run -d -p 8080:8080 \
     -e DATABASE_URL='sqlite::memory:' \
-    -e HOST_WHITELIST='beta.swissgeol.ch' \
+    -e HOST_WHITELIST='viewer.swissgeol.ch' \
     camptocamp/abbreviator:main
 ```
 
@@ -19,7 +19,7 @@ This exposes the service on `localhost:8080` with an in-memory sqlite database.
 Sample request to shorten a url:
 
 ```bash
-curl -v localhost:8080/ -d '{ "url": "https://beta.swissgeol.ch/?layers=ch.swisstopo.geologie-geocover" }'
+curl -v localhost:8080/ -d '{ "url": "https://viewer.swissgeol.ch/?layers=ch.swisstopo.geologie-geocover" }'
 ```
 
 The `Location` header contains the shortened url to retrieve the original url:
@@ -88,7 +88,7 @@ To persist the database mount a volume or directory to `/storage` and let the `D
 docker build -t abbreviator:prod -f Dockerfile .
 docker run -d -p 8080:8080 \
     -e DATABASE_URL='sqlite:///storage/prod.db' \
-    -e HOST_WHITELIST='dev.swissgeol.ch int.swissgeol.ch beta.swissgeol.ch swissgeol.ch' \
+    -e HOST_WHITELIST='dev.swissgeol.ch int.swissgeol.ch viewer.swissgeol.ch swissgeol.ch' \
     -v `pwd`:/storage \
     abbreviator:prod
 ```
@@ -97,4 +97,13 @@ The app runs with an unprivileged user `appuser` that gets write access on start
 
 ## License
 
-abbreviator is available under the terms of the GNU General Public License Version 3. For full license terms, see [LICENSE](./LICENSE).
+Licensed under either of
+
+ * Apache License, Version 2.0 ([LICENSE-APACHE](LICENSE-APACHE) or http://www.apache.org/licenses/LICENSE-2.0)
+ * MIT license ([LICENSE-MIT](LICENSE-MIT) or http://opensource.org/licenses/MIT)
+
+at your option.
+
+### Contribution
+
+Unless you explicitly state otherwise, any contribution intentionally submitted for inclusion in the work by you, as defined in the Apache-2.0 license, shall be dual licensed as above, without any additional terms or conditions.
