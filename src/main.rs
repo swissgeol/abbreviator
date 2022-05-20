@@ -1,4 +1,4 @@
-use std::env;
+use clap::Parser;
 
 #[async_std::main]
 async fn main() -> anyhow::Result<()> {
@@ -8,15 +8,14 @@ async fn main() -> anyhow::Result<()> {
     // Start logging
     tide::log::start();
 
+    // Config
+    let config = abbreviator::Config::parse();
+
     // Compose server
-    let app = abbreviator::server().await?;
+    let app = abbreviator::server(&config).await?;
 
     // Listen...
-    let address = format!(
-        "{}:{}",
-        env::var("HOST").unwrap_or_else(|_| String::from("0.0.0.0")),
-        env::var("PORT").unwrap_or_else(|_| 8080.to_string())
-    );
+    let address = format!("{}:{}", config.host, config.port);
     app.listen(address).await?;
 
     Ok(())

@@ -3,7 +3,7 @@ use serde::Deserialize;
 use tide::{Request, Response, StatusCode};
 use url::{Position, Url};
 
-use crate::State;
+use crate::state::State;
 
 #[derive(Debug, Deserialize)]
 struct RequestBody {

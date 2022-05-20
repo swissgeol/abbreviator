@@ -4,14 +4,11 @@ use tide::{
     Request, Response, Server, StatusCode,
 };
 
-mod handlers;
-mod state;
+use crate::{config::Config, state::State};
 
-pub use state::State;
-
-pub async fn server() -> anyhow::Result<Server<State>> {
+pub async fn server(config: &Config) -> anyhow::Result<Server<State>> {
     // Create application state
-    let state = State::new().await?;
+    let state = State::new(config.to_owned()).await?;
 
     // Create app
     let mut app = tide::with_state(state);
@@ -25,8 +22,8 @@ pub async fn server() -> anyhow::Result<Server<State>> {
     app.with(cors);
 
     // Add routes & handlers
-    app.at("/").post(handlers::shorten);
-    app.at("/:id").get(handlers::resolve);
+    app.at("/").post(crate::handlers::shorten);
+    app.at("/:id").get(crate::handlers::resolve);
 
     // Health check
     app.at("/health_check")
