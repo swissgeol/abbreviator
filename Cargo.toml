@@ -1,21 +1,18 @@
 [package]
 name = "abbreviator"
 version = "1.0.2"
-authors = ["Balthasar Teuscher <balthasar.teuscher@gmail.com>"]
 license = "GPL-3.0-only"
 edition = "2021"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [lib]
 path = "src/server.rs"
 
 [dependencies]
-anyhow = "1.0"
-async-std = { version = "1.10", features = ["attributes"] }
+anyhow = "1.0.57"
+async-std = { version = "1.11.0", features = ["attributes"] }
 dotenv = "0.15.0"
-rand = "0.8.4"
+rand = "0.8.5"
 serde = { version = "1.0", features = ["derive"] }
-sqlx = { version = "0.5.10", features = ["runtime-async-std-rustls", "sqlite"] }
+sqlx = { version = "0.5.13", features = ["runtime-async-std-rustls", "sqlite"] }
 tide = "0.16.0"
-url = "2.2"
+url = "2.2.2"
