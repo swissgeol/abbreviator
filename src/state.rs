@@ -1,7 +1,8 @@
-use std::env;
 use std::str::FromStr;
 
 use sqlx::sqlite::{SqliteConnectOptions, SqlitePool};
+
+use crate::config::Config;
 
 // Shared application state
 #[derive(Clone, Debug)]
@@ -12,27 +13,20 @@ pub struct State {
 }
 
 impl State {
-    pub(crate) async fn new() -> anyhow::Result<State> {
-        let db_url = env::var("DATABASE_URL").expect("Missing `DATABASE_URL` environment variable");
-        let db_options = SqliteConnectOptions::from_str(&db_url)?.create_if_missing(true);
+    pub async fn new(config: Config) -> anyhow::Result<State> {
+        // Database pool
+        let db_options =
+            SqliteConnectOptions::from_str(config.database_url.as_str())?.create_if_missing(true);
         let db_pool = SqlitePool::connect_with(db_options).await?;
-        tide::log::info!("DATABASE_URL: {}", db_url);
-
-        let whitelist =
-            env::var("HOST_WHITELIST").expect("Missing `HOST_WHITELIST` environment variable");
-        let host_whitelist: Vec<String> = whitelist.split_whitespace().map(String::from).collect();
-        tide::log::info!("HOST_WHITELIST: {}", whitelist);
-
-        let id_length = env::var("ID_LENGTH")
-            .unwrap_or_else(|_| "5".to_string())
-            .parse()
-            .expect("Failed parsing to integer");
-        tide::log::info!("ID_LENGTH: {}", id_length);
 
         Ok(State {
             db_pool,
-            host_whitelist,
-            id_length,
+            host_whitelist: config
+                .host_whitelist
+                .split_whitespace()
+                .map(String::from)
+                .collect(),
+            id_length: config.id_length,
         })
     }
 }

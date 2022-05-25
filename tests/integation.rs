@@ -1,3 +1,4 @@
+use clap::Parser;
 use tide::{
     http::{Method, Request, Response},
     StatusCode,
@@ -9,7 +10,9 @@ async fn basic() -> tide::Result<()> {
     std::env::set_var("DATABASE_URL", "sqlite::memory:");
     std::env::set_var("HOST_WHITELIST", "beta.swissgeol.ch");
 
-    let app = abbreviator::server().await?;
+    let config = abbreviator::Config::parse();
+
+    let app = abbreviator::server(&config).await?;
 
     let url = "https://beta.swissgeol.ch/?layers=ch.swisstopo.geologie-geocover%1Cboreholes%2Ccross_section%2Cearthquakes&layers_visibility=true%2Cfalse%2Cfalse%2Cfalse&layers_transparency=0.3%2C0%2C0%2C0&lang=en&map_transparency=0&map=ch.swisstopo.pixelkarte-grau&lon=6.06749&lat=43.77784&elevation=204227&heading=26&pitch=-33";
 
@@ -42,7 +45,9 @@ async fn whitelist() -> tide::Result<()> {
     std::env::set_var("DATABASE_URL", "sqlite::memory:");
     std::env::set_var("HOST_WHITELIST", "beta.swissgeol.ch");
 
-    let app = abbreviator::server().await?;
+    let config = abbreviator::Config::parse();
+
+    let app = abbreviator::server(&config).await?;
     let url = "https://betina.swissgeol.ch/?layers=ch.swisst";
 
     // Create shortlink
