@@ -11,7 +11,7 @@ Spawn the docker image built from the `main` branch.
 docker run -d -p 8080:8080 \
     -e DATABASE_URL='sqlite::memory:' \
     -e HOST_WHITELIST='viewer.swissgeol.ch' \
-    camptocamp/abbreviator:main
+    ghcr.io/swisstopo/swissgeol-viewer-app-abbreviator:main
 ```
 
 This exposes the service on `localhost:8080` with an in-memory sqlite database.
@@ -59,7 +59,7 @@ Checks the connection to the database and returns the `CARGO_PKG_VERSION` enviro
 
 ```bash
 # clone
-git clone git@github.com:camptocamp/abbreviator.git
+git clone git@github.com:camptocamp/abbreviator.git # todo update when moved
 cd abbreviator
 
 # build and test
