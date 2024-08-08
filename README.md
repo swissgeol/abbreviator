@@ -59,7 +59,7 @@ Checks the connection to the database and returns the `CARGO_PKG_VERSION` enviro
 
 ```bash
 # clone
-git clone git@github.com:camptocamp/abbreviator.git # todo update when moved
+git clone git@github.com:swisstopo/swissgeol-viewer-app-abbreviator.git
 cd abbreviator
 
 # build and test
